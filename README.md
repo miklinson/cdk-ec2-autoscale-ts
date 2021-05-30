@@ -1,8 +1,19 @@
-# Welcome to your CDK TypeScript project!
+# ALB - ASG - EC2 Stack
 
-This is a blank project for TypeScript development with CDK.
+The project implements a simple web server that is hosted in Amazon Linux 2 instances that will be in an auto-scaling group behind an Application Load Balancer. The web server will display the instance id of the ec2. By accessing the load balancer, you'll be automatically routed to different instances.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+## Deployment steps
+Below are the steps to deploy the use case:
+
+```
+npm run build
+
+cdk deploy
+
+```
+
+## Deployment Verification
+After the stack is deployed successfully, go to the Outputs tab in AWS Cloudformation console of EC2AutoScalingStack, it should show the 'lbDns', Load Balancer DNS.
 
 ## Useful commands
 
