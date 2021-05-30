@@ -19,10 +19,10 @@ export class Ec2AutoscalingStack extends cdk.Stack {
       isDefault: false,
       vpcId: vpcId
     });
-    const httpPort = new ec2.Port({
-      protocol: ec2.Protocol.TCP,
-      stringRepresentation: 'port80'
-    });
+    // const httpPort = new ec2.Port({
+    //   protocol: ec2.Protocol.TCP,
+    //   stringRepresentation: 'port80'
+    // });
 
     // -- Permission --
     const instanceRole = new iam.Role(this, 'instanceRole', {
@@ -36,14 +36,14 @@ export class Ec2AutoscalingStack extends cdk.Stack {
       allowAllOutbound: true,
       description: 'Load Balancer Security Group'
     });
-    lbSg.addIngressRule(ec2.Peer.anyIpv4(), httpPort);
+    lbSg.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(80));
 
     const instanceSg = new ec2.SecurityGroup(this, 'instanceSg', {
       vpc: liveVpc,
       allowAllOutbound: true,
       description: 'Instance Security Group'
     });
-    instanceSg.addIngressRule(lbSg, httpPort);
+    instanceSg.addIngressRule(lbSg, ec2.Port.tcp(80));
 
     //-- ASG --
     const webAsg = new autoscaling.AutoScalingGroup(this, 'webAsg', {
@@ -71,7 +71,10 @@ export class Ec2AutoscalingStack extends cdk.Stack {
     const webLb = new elbv2.ApplicationLoadBalancer(this, 'webLb', {
       vpc: liveVpc,
       internetFacing: true,
-      securityGroup: lbSg
+      securityGroup: lbSg,
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE, onePerAz: true
+      }
     });
     const webListener = webLb.addListener('webListener', {
       port: 80,
