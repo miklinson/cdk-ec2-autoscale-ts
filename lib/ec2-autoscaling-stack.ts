@@ -19,10 +19,6 @@ export class Ec2AutoscalingStack extends cdk.Stack {
       isDefault: false,
       vpcId: vpcId
     });
-    // const httpPort = new ec2.Port({
-    //   protocol: ec2.Protocol.TCP,
-    //   stringRepresentation: 'port80'
-    // });
 
     // -- Permission --
     const instanceRole = new iam.Role(this, 'instanceRole', {
@@ -45,7 +41,7 @@ export class Ec2AutoscalingStack extends cdk.Stack {
     });
     instanceSg.addIngressRule(lbSg, ec2.Port.tcp(80));
 
-    //-- ASG --
+    //-- Auto Scaling Group --
     const webAsg = new autoscaling.AutoScalingGroup(this, 'webAsg', {
       vpc: liveVpc,
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T3, ec2.InstanceSize.MICRO),
@@ -64,10 +60,10 @@ export class Ec2AutoscalingStack extends cdk.Stack {
     bootscript = fs.readFileSync('scripts/user_data.sh', 'utf-8');
     webAsg.addUserData(bootscript);
 
-    // Add SG to ASG
+    // Add Security Group to Auto Scaling Group
     webAsg.addSecurityGroup(instanceSg);
 
-    // -- ALB --
+    // -- Application Load Balancer --
     const webLb = new elbv2.ApplicationLoadBalancer(this, 'webLb', {
       vpc: liveVpc,
       internetFacing: true,
@@ -86,7 +82,7 @@ export class Ec2AutoscalingStack extends cdk.Stack {
       targets: [webAsg]
     });
 
-    // -- Outputs --
+    // -- CloudFormation Outputs --
     new cdk.CfnOutput(this, 'LbDns', {
       value: webLb.loadBalancerDnsName!
     })
