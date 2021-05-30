@@ -53,7 +53,7 @@ export class Ec2AutoscalingStack extends cdk.Stack {
         generation: ec2.AmazonLinuxGeneration.AMAZON_LINUX_2
       }),
       maxCapacity: maxCapacity,
-      minCapacity: 2,
+      minCapacity: 1,
       desiredCapacity: desiredCapacity,
       role: instanceRole
     });

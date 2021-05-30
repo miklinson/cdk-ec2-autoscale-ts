@@ -4,7 +4,7 @@
   },
   "asg": {
     "maxCapacity": "5",
-    "desiredCapacity": "3"
+    "desiredCapacity": "2"
   },
   "vpc-provider:account=303298842810:filter.isDefault=false:filter.vpc-id=vpc-0805a2cb705699555:region=ap-southeast-1:returnAsymmetricSubnets=true": {
     "vpcId": "vpc-0805a2cb705699555",
